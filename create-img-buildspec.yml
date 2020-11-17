@@ -1,0 +1,27 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - echo 'Nothing To Install'
+  pre_build:
+    commands:
+      - echo 'Nothing To Do In Pre-Build Phase'
+      - $(aws ecr get-login --no-include-email --region us-west-2)
+  build:
+    commands:
+      - echo '-----------------------------------------------------------------------------------------'
+      - echo 'Building Custom Image For AWS Code Build'
+      - echo '-----------------------------------------------------------------------------------------'
+      - docker build -t terraformimg:latest . --build-arg  Terraform_Version='0.13.3'
+      - docker tag terraformimg:latest 138871512076.dkr.ecr.us-west-2.amazonaws.com/pge-ecm-terraform-customimage:latest
+      - echo '-----------------------------------------------------------------------------------------'
+      - echo 'Bulding Docker Image And Tagging Completed Sucessfully'
+      - echo '-----------------------------------------------------------------------------------------'
+  post_build:
+    commands:
+      - echo '----------------------------------------------------------------------------------------'
+      - echo 'Logging Into AWS ECR Repository pge-ecm-terraform-customimage'
+      - echo '-----------------------------------------------------------------------------------------'
+      - echo 'Pushing Custom Image To Repository pge-ecm-terraform-customimage'
+      - echo '-----------------------------------------------------------------------------------------'
+      - docker push 138871512076.dkr.ecr.us-west-2.amazonaws.com/pge-ecm-terraform-customimage:latest
